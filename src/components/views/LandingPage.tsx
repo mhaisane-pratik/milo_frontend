@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useMilo } from '@/context/MiloContext';
 import { CATEGORY_ICONS } from '@/lib/mockData';
 import { ActivityCard } from '../ui/ActivityCard';
@@ -19,12 +19,73 @@ import {
   Smile,
   Zap,
   Lock,
-  MessageSquare
+  MessageSquare,
+  Camera,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Maximize2
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+
+interface MiloMoment {
+  id: string;
+  src: string;
+  eventTag: string;
+  title: string;
+  subtitle: string;
+  venue: string;
+  attendees: string;
+  badgeColor: string;
+  spanClass?: string;
+}
+
+const MILO_MOMENTS: MiloMoment[] = [
+  {
+    id: 'cafe-1-group',
+    src: '/images/events/cafe-meetup-1-group.jpg',
+    eventTag: '1st Cafe Meetup',
+    title: 'Cafe Urban Adda Squad',
+    subtitle: 'Where it all began — 17 strangers walked in, left as friends.',
+    venue: 'Cafe Urban Adda, Pune',
+    attendees: '17+ Members',
+    badgeColor: 'bg-amber-500 text-white',
+  },
+  {
+    id: 'cafe-1-inside',
+    src: '/images/events/cafe-meetup-1-inside.jpg',
+    eventTag: '1st Cafe Meetup · Inside',
+    title: 'Conversations & Icebreakers',
+    subtitle: 'Table talks, laughs, and genuine connections over coffee.',
+    venue: 'Cafe Urban Adda, Pune',
+    attendees: '1st Meetup',
+    badgeColor: 'bg-orange-500 text-white',
+  },
+  {
+    id: 'cricket-3',
+    src: '/images/events/cricket-meetup-3.jpg',
+    eventTag: '3rd Event · Cricket Meetup',
+    title: 'Weekend Turf Cricket Bash',
+    subtitle: 'Full-energy turf matches, sixes, and unforgettable team vibes.',
+    venue: 'Vedant Sports Arena, Pune',
+    attendees: '17+ Players',
+    badgeColor: 'bg-emerald-500 text-white',
+  },
+  {
+    id: 'cafe-4',
+    src: '/images/events/cafe-meetup-4.jpg',
+    eventTag: '4th Event · Cafe Meetup',
+    title: 'MILO 4th Cafe Meetup',
+    subtitle: 'Growing stronger every weekend — 20+ members together at Urban Adda.',
+    venue: 'Cafe Urban Adda, Pune',
+    attendees: '20+ Members',
+    badgeColor: 'bg-milo-purple text-white',
+  },
+];
 
 export const LandingPage: React.FC = () => {
   const { navigateTo, events, setIsLoginModalOpen } = useMilo();
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const categories: { type: CategoryType; label: string; count: string }[] = [
     { type: 'Coffee', label: 'Coffee & Cafes', count: '18 meetups' },
@@ -194,6 +255,191 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* 2.5 REAL MILO MOMENTS GALLERY (Bento Showcase) */}
+      <section id="moments" className="py-20 bg-gradient-to-b from-white via-amber-50/30 to-[#FAFAF9]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div className="max-w-2xl">
+              <span className="inline-flex items-center gap-2 text-xs font-bold text-milo-orange uppercase tracking-widest bg-milo-orange-light px-3.5 py-1.5 rounded-full">
+                <Camera className="w-3.5 h-3.5" />
+                <span>Real Meetups • Real Pune Stories</span>
+              </span>
+              <h2 className="text-3xl sm:text-5xl font-black text-slate-900 mt-3 tracking-tight">
+                Moments from our{' '}
+                <span className="bg-gradient-to-r from-milo-orange via-milo-coral to-milo-purple bg-clip-text text-transparent">
+                  MILO Meetups
+                </span>
+              </h2>
+              <p className="text-slate-600 mt-2 font-semibold text-sm sm:text-base">
+                From our very first Cafe Urban Adda hangout to turf cricket battles — real people showing up every weekend.
+              </p>
+            </div>
+
+            <button
+              onClick={() => setIsLoginModalOpen(true)}
+              className="px-6 py-3 rounded-2xl bg-slate-900 hover:bg-milo-orange text-white font-bold text-sm shadow-lg transition-all hover:scale-105 inline-flex items-center gap-2 self-start md:self-auto"
+            >
+              <span>Be in the next photo</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Bento Grid Layout for 4 Event Photos */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+            {/* Photo 1: 1st Cafe Meetup Group (Left Tall Feature) */}
+            <motion.div
+              whileHover={{ y: -6 }}
+              onClick={() => setLightboxIndex(0)}
+              className="md:col-span-5 relative group rounded-3xl overflow-hidden shadow-xl border-4 border-white cursor-pointer h-[380px] md:h-[520px] bg-slate-900"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={MILO_MOMENTS[0].src}
+                alt={MILO_MOMENTS[0].title}
+                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/25 to-transparent" />
+              <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
+                <span className={`text-xs font-extrabold px-3.5 py-1.5 rounded-full shadow-lg ${MILO_MOMENTS[0].badgeColor}`}>
+                  {MILO_MOMENTS[0].eventTag}
+                </span>
+                <span className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Maximize2 className="w-4 h-4" />
+                </span>
+              </div>
+              <div className="absolute bottom-5 left-5 right-5 text-white space-y-1.5">
+                <div className="flex items-center gap-3 text-xs font-semibold text-white/80">
+                  <span className="inline-flex items-center gap-1">
+                    <MapPin className="w-3.5 h-3.5 text-milo-orange" />
+                    {MILO_MOMENTS[0].venue}
+                  </span>
+                  <span>•</span>
+                  <span className="inline-flex items-center gap-1">
+                    <Users className="w-3.5 h-3.5 text-amber-300" />
+                    {MILO_MOMENTS[0].attendees}
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black leading-snug">
+                  {MILO_MOMENTS[0].title}
+                </h3>
+                <p className="text-xs sm:text-sm text-white/85 font-medium line-clamp-2">
+                  {MILO_MOMENTS[0].subtitle}
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Right Column: Top (Photo 2 + Photo 3) & Bottom Wide (Photo 4) */}
+            <div className="md:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {/* Photo 2: 1st Cafe Meetup Inside */}
+              <motion.div
+                whileHover={{ y: -6 }}
+                onClick={() => setLightboxIndex(1)}
+                className="relative group rounded-3xl overflow-hidden shadow-xl border-4 border-white cursor-pointer h-[280px] md:h-[248px] bg-slate-900"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={MILO_MOMENTS[1].src}
+                  alt={MILO_MOMENTS[1].title}
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
+                <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between">
+                  <span className={`text-[11px] font-extrabold px-3 py-1 rounded-full shadow-lg ${MILO_MOMENTS[1].badgeColor}`}>
+                    {MILO_MOMENTS[1].eventTag}
+                  </span>
+                  <span className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Maximize2 className="w-3.5 h-3.5" />
+                  </span>
+                </div>
+                <div className="absolute bottom-4 left-4 right-4 text-white space-y-1">
+                  <h3 className="text-base sm:text-lg font-black leading-tight">
+                    {MILO_MOMENTS[1].title}
+                  </h3>
+                  <p className="text-xs text-white/85 font-medium line-clamp-2">
+                    {MILO_MOMENTS[1].subtitle}
+                  </p>
+                </div>
+              </motion.div>
+
+              {/* Photo 3: Cricket Meetup */}
+              <motion.div
+                whileHover={{ y: -6 }}
+                onClick={() => setLightboxIndex(2)}
+                className="relative group rounded-3xl overflow-hidden shadow-xl border-4 border-white cursor-pointer h-[280px] md:h-[248px] bg-slate-900"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={MILO_MOMENTS[2].src}
+                  alt={MILO_MOMENTS[2].title}
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
+                <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between">
+                  <span className={`text-[11px] font-extrabold px-3 py-1 rounded-full shadow-lg ${MILO_MOMENTS[2].badgeColor}`}>
+                    {MILO_MOMENTS[2].eventTag}
+                  </span>
+                  <span className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Maximize2 className="w-3.5 h-3.5" />
+                  </span>
+                </div>
+                <div className="absolute bottom-4 left-4 right-4 text-white space-y-1">
+                  <h3 className="text-base sm:text-lg font-black leading-tight">
+                    {MILO_MOMENTS[2].title}
+                  </h3>
+                  <p className="text-xs text-white/85 font-medium line-clamp-2">
+                    {MILO_MOMENTS[2].subtitle}
+                  </p>
+                </div>
+              </motion.div>
+
+              {/* Photo 4: 4th Cafe Meetup (Bottom Wide Card) */}
+              <motion.div
+                whileHover={{ y: -6 }}
+                onClick={() => setLightboxIndex(3)}
+                className="sm:col-span-2 relative group rounded-3xl overflow-hidden shadow-xl border-4 border-white cursor-pointer h-[280px] md:h-[248px] bg-slate-900"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={MILO_MOMENTS[3].src}
+                  alt={MILO_MOMENTS[3].title}
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/25 to-transparent" />
+                <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
+                  <span className={`text-xs font-extrabold px-3.5 py-1.5 rounded-full shadow-lg ${MILO_MOMENTS[3].badgeColor}`}>
+                    {MILO_MOMENTS[3].eventTag}
+                  </span>
+                  <span className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Maximize2 className="w-4 h-4" />
+                  </span>
+                </div>
+                <div className="absolute bottom-4 left-5 right-5 text-white flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-3 text-xs font-semibold text-white/80">
+                      <span className="inline-flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5 text-milo-orange" />
+                        {MILO_MOMENTS[3].venue}
+                      </span>
+                      <span>•</span>
+                      <span className="inline-flex items-center gap-1">
+                        <Users className="w-3.5 h-3.5 text-purple-300" />
+                        {MILO_MOMENTS[3].attendees}
+                      </span>
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-black leading-tight">
+                      {MILO_MOMENTS[3].title}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-white/85 font-medium">
+                      {MILO_MOMENTS[3].subtitle}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 3. ACTIVITY SECTION */}
       <section id="activities" className="py-20 bg-[#FAFAF9]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -351,8 +597,8 @@ export const LandingPage: React.FC = () => {
                 <div className="relative rounded-2xl overflow-hidden border-2 border-white/30 shadow-2xl">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=800"
-                    alt="Community meetups"
+                    src="/images/events/cafe-meetup-4.jpg"
+                    alt="MILO Pune Community Meetup at Cafe Urban Adda"
                     className="w-full h-80 object-cover"
                   />
                 </div>
@@ -507,6 +753,81 @@ export const LandingPage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Lightbox Modal for Event Photos */}
+      <AnimatePresence>
+        {lightboxIndex !== null && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setLightboxIndex(null)}
+            className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.94, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.94, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative max-w-4xl w-full bg-slate-900 rounded-3xl overflow-hidden border border-white/15 shadow-2xl"
+            >
+              <button
+                onClick={() => setLightboxIndex(null)}
+                aria-label="Close photo preview"
+                className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <button
+                onClick={() =>
+                  setLightboxIndex((lightboxIndex - 1 + MILO_MOMENTS.length) % MILO_MOMENTS.length)
+                }
+                aria-label="Previous photo"
+                className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center transition-colors"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+
+              <button
+                onClick={() => setLightboxIndex((lightboxIndex + 1) % MILO_MOMENTS.length)}
+                aria-label="Next photo"
+                className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center transition-colors"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+
+              <div className="relative bg-black flex items-center justify-center max-h-[70vh]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={MILO_MOMENTS[lightboxIndex].src}
+                  alt={MILO_MOMENTS[lightboxIndex].title}
+                  className="max-h-[70vh] w-auto object-contain"
+                />
+              </div>
+
+              <div className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-white">
+                <div>
+                  <span className={`inline-block text-xs font-bold px-3 py-1 rounded-full mb-2 ${MILO_MOMENTS[lightboxIndex].badgeColor}`}>
+                    {MILO_MOMENTS[lightboxIndex].eventTag}
+                  </span>
+                  <h3 className="text-xl font-black">{MILO_MOMENTS[lightboxIndex].title}</h3>
+                  <p className="text-sm text-slate-300 mt-0.5">{MILO_MOMENTS[lightboxIndex].subtitle}</p>
+                </div>
+                <button
+                  onClick={() => {
+                    setLightboxIndex(null);
+                    setIsLoginModalOpen(true);
+                  }}
+                  className="px-5 py-3 rounded-2xl bg-milo-orange hover:bg-milo-orange-hover text-white font-bold text-sm shrink-0 transition-all"
+                >
+                  Join Next Meetup
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Footer */}
       <Footer />
